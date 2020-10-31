@@ -1,6 +1,7 @@
 import csv
 import time
 
+# classes for incoming data
 class Read:    
     def __init__(self, readStart, readLength):  # sets values of start and length when object is
         self.start = readStart                  # is constructed
