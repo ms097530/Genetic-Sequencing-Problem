@@ -1,0 +1,16 @@
+BLI assessment notes
+
+- implement sorted list by having it contain a list and managing insertions
+
+first - read files into auto sorted containers
+second -
+
+
+Reasoning:
+	Reading files into an automatically sorted container will allow further insertions into while still maintaining the integrity of processing the reads quickly.
+
+1,2,3,4,5,6,7,8,9,10
+
+4, 3 -- would require second loop after to progress through remaining possible matching loci after finding loci.position greater than start
+5, 2
+7, 1
