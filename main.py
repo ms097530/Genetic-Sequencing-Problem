@@ -2,43 +2,53 @@ import csv
 import time
 
 # classes for incoming data
-class Read:    
-    def __init__(self, readStart, readLength):  # sets values of start and length when object is
+
+
+class Read:
+    # sets values of start and length when object is
+    def __init__(self, readStart, readLength):
         self.start = readStart                  # is constructed
         self.length = readLength
-    
+
     def __lt__(self, other):     # needed to allow Read values to be sorted in a list
         return self.start < other.start
 
-class Loci:   
-    
+
+class Loci:
+
     def __init__(self, readPosition):   # sets the value of the position of interest; coverage
-        self.position = readPosition    # will keep count of Read values that overlap position
+        # will keep count of Read values that overlap position
+        self.position = readPosition
         self.coverage = 0               # and be incremented as such, so there is no need to
-                                        # change the starting value from 0
+        # change the starting value from 0
+
     def __lt__(self, other):    # needed to allow sorting in list
         return self.position < other.position
 
+
 def processReads(readFilePath, lociFilePath, outputFilePath):
-# inputs: file paths
-#       readFilePath: must have header as first row and two columns with integer values for each
-#       lociFilePath: path to file containing values of interest, must have header as first row and two columns, seconds column may be empty
-#       outputFilePath: output formatted the same as lociFilePath but with the second column filled in
-# outputs: a new file is created according to outputFilePath with coverage data filled in
-    reads_list = [] # to store read values from file
+    # inputs: file paths
+    #       readFilePath: must have header as first row and two columns with integer values for each
+    #       lociFilePath: path to file containing values of interest, must have header as first row and two columns, seconds column may be empty
+    #       outputFilePath: output formatted the same as lociFilePath but with the second column filled in
+    # outputs: a new file is created according to outputFilePath with coverage data filled in,
+    #          data is sorted in ascending order based on position
+    reads_list = []  # to store read values from file
     loci_list = []  # to store loci values from file
     with open(readFilePath) as read_file:
         reads_reader = csv.reader(read_file, delimiter=',')
-        next(reads_reader) # skip header row of file
+        next(reads_reader)  # skip header row of file
         for row in reads_reader:   # loop to read in values from reads.csv and store in list
-            input = Read(int(row[0]), int(row[1]))  # data read in as string must be explicitly converted to numeric type
+            # data read in as string must be explicitly converted to numeric type
+            input = Read(int(row[0]), int(row[1]))
             reads_list.append(input)
     # do the same thing with loci_list
     with open(lociFilePath) as loci_file:
         loci_reader = csv.reader(loci_file, delimiter=',')
         next(loci_reader)
         for row in loci_reader:
-            input = Loci(int(row[0]))   # data read in as string must be explicitly converted to numeric type
+            # data read in as string must be explicitly converted to numeric type
+            input = Loci(int(row[0]))
             loci_list.append(input)
 
     # sort reads_list and loci_list - the values will be sorted in ascending order
@@ -61,9 +71,10 @@ def processReads(readFilePath, lociFilePath, outputFilePath):
     earliestIndex = 0   # tracking index starts at 0
     for loci in loci_list:
         earliestFound = False
-        i = earliestIndex    
+        i = earliestIndex
         while (reads_list[i].start <= loci.position):
-            if (reads_list[i].start + reads_list[i].length) > loci.position:   # already know value <= loci.position, must make sure adding length causes overlap
+            # already know value <= loci.position, must make sure adding length causes overlap
+            if (reads_list[i].start + reads_list[i].length) > loci.position:
                 loci.coverage += 1
                 if earliestFound == False:  # save index of first match found for this loci for starting point for next loci
                     earliestIndex = i
@@ -76,6 +87,7 @@ def processReads(readFilePath, lociFilePath, outputFilePath):
         for loci in loci_list:
             loci_writer.writerow([loci.position, loci.coverage])
 
+
 before = time.time()
 processReads('data\\reads.csv', 'data\\loci.csv', 'data\\loci.csv')
 
@@ -83,5 +95,3 @@ processReads('data\\reads.csv', 'data\\loci.csv', 'data\\loci.csv')
 after = time.time()
 elapsed = after - before
 print(elapsed, "seconds elapsed")
-    
-    
